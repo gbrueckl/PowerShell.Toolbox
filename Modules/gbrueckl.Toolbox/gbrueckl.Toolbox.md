@@ -1,12 +1,6 @@
-# PowerShell Module for Databricks
+# PowerShell Module gbrueckl.Toolbox
 
-This repository contains the source code for the PowerShell module "DatabricksPS". The module can also be found in the public PowerShell gallery: https://www.powershellgallery.com/packages/DatabricksPS/
-
-It works for Databricks on Azure and also AWS. The APIs are almost identical so I decided to bundle them in one single module. The official API documentations can be found here:
-
-Azure Databricks - https://docs.azuredatabricks.net/api/latest/index.html
-
-Databricks on AWS - https://docs.databricks.com/api/latest/index.html
+This repository contains a set of cmdlets that I use frequently and help to write code for Azure, DevOps, etc.
 
 # Setup
 The easiest way to install the PowerShell module is to use the PowerShell built-in Install-Module cmdlet:
@@ -14,7 +8,7 @@ The easiest way to install the PowerShell module is to use the PowerShell built-
 Install-Module -Name gbrueckl.Toolbox
 ```
 
-Alternatively you can also download this repository and copy the folder \Modules\DatabricksPS locally and install it from the local path, also using the Import-Module cmdlet:
+Alternatively you can also download this repository and copy the folder \Modules\gbrueckl.Toolbox locally and install it from the local path, also using the Import-Module cmdlet:
 ```powershell
 Import-Module "C:\MyPSModules\Modules\gbrueckl.Toolbox"
 ```
