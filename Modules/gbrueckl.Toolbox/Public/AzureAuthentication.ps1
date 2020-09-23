@@ -11,7 +11,7 @@ function Get-AzureAuthentication
 		[Parameter(ParameterSetName = "ServicePrincipal", Mandatory = $true, Position = 3)] [string] $ClientKey,
 		
 		[Parameter(ParameterSetName = "Basic", Mandatory = $true, Position = 3)] [string] $Username,
-		[Parameter(ParameterSetName = "Basic", Mandatory = $true, Position = 3)] [string] $Password,
+		[Parameter(ParameterSetName = "Basic", Mandatory = $true, Position = 4)] [string] $Password,
 		
 		[Parameter(Mandatory = $false)] [string] $Scope,
 		[Parameter(Mandatory = $false)] [switch] $TokenOnly
@@ -64,17 +64,3 @@ function Get-AzureAuthentication
 		return $response
 	}
 }
-
-$authUrl = "https://login.windows.net/$TenantID/oauth2/token/"
-$body = @{
-	"client_id" = $clientId
-	"grant_type" = "client_credentials"
-	"client_secret" = $clientKey
-	"scope" = "https://herbiedv0b2c.onmicrosoft.com/TelematicsServices/read_write"
-}
-
-Invoke-RestMethod -Uri $authUrl -Method Post -Body $body
-
-# TRY/CATCH with proper Error message on APIs
-#try { Invoke-RestMethod -Uri $Uri -Headers $Headers }
-#catch { ([System.IO.StreamReader]$_.Exception.Response.GetResponseStream()).ReadToEnd() }
