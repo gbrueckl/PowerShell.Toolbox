@@ -3,13 +3,8 @@ $ErrorActionPreference = "Stop"
 # print Information stream
 $InformationPreference = "Continue"
 
-$rootPath = Switch ($Host.name){
-    'Visual Studio Code Host' { split-path $psEditor.GetEditorContext().CurrentFile.Path }
-    'Windows PowerShell ISE Host' {  Split-Path -Path $psISE.CurrentFile.FullPath }
-    'ConsoleHost' { $PSScriptRoot }
-}
-
-$rootPath = $rootPath | Split-Path -Parent
+$scriptFolder = Get-CurrentScriptPath -ParentPath 
+$rootPath = $scriptFolder | Split-Path -Parent
 
 $config = Get-Content "$rootPath\Publish\PublishConfig.json" | ConvertFrom-Json
 $ModuleName = (Get-ChildItem "$rootPath\Modules")[0].Name

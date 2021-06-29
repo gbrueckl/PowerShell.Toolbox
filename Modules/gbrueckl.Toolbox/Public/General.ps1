@@ -92,9 +92,9 @@ function Join-Parts {
 function Get-Token {
 	<#
 		.SYNOPSIS
-		Splits a string and returns a single split based on the ordinal.
+		Splits a string and returns the tokens. If -Index is provided, a single token is retured.
 		.DESCRIPTION
-		Splits a string and returns a single split based on the ordinal.
+		Splits a string and returns the tokens. If -Index is provided, a single token is retured.
 		.PARAMETER Text
 		The text from which to extract a token.
 		.PARAMETER Separator
@@ -105,6 +105,14 @@ function Get-Token {
 		E.g. Index -1 would return the last token.
 		.PARAMETER TrimSeparators
 		If specified, all leading and trailing Separators are removed from the Text before the splitting.
+		.EXAMPLE
+		Get-Token -Text "/a/b/c" -Separator "/"
+		# Output: @("", "a", "b", "c")
+		# Description: the single tokens, including a blank in the begining as the text starts with a separator
+		.EXAMPLE
+		Get-Token -Text "/a/b/c" -Separator "/" -TrimSeparators
+		# Output: @("a", "b", "c")
+		# Description: the single tokens, without the leading blank value
 		.EXAMPLE
 		Get-Token -Text "/a/b/c" -Separator "/" -Index 1
 		# Output: a
@@ -126,7 +134,7 @@ function Get-Token {
 	param
 	(
 		[Parameter(Mandatory = $true, Position = 1)] [string] $Text, 
-		[Parameter(Mandatory = $true, Position = 2)] [int] $Index,
+		[Parameter(Mandatory = $false, Position = 2)] [int] $Index,
 		[Parameter(Mandatory = $false, Position = 3)] [string] $Separator, 
         [Parameter(Mandatory = $false)] [switch]$TrimSeparators
 	)
@@ -145,14 +153,27 @@ function Get-Token {
     {
         $Text = $Text.Trim($Separator)
     }
-	$splits = $Text -split $Separator
-	
-	if($Index -eq -1 -and $splits.Length -eq 1)
-	{
-		$Index = 0
-	}
 
-    return $splits[$Index]
+	if(-not $Text -contains $Separator)
+	{
+		$splits = $Text
+	}
+	else {
+		$splits = $Text -split $Separator
+	}
+	
+	if(-not $PSBoundParameters.ContainsKey('Index'))
+	{
+		return ,$splits
+	}
+	else {
+		if($Index -eq -1 -and $splits.Length -eq 1)
+		{
+			$Index = 0
+		}
+
+		return $splits[$Index]
+	}
 }
 
 function Get-CoalesceValue {
@@ -184,11 +205,12 @@ function Get-CoalesceValue {
     {
         if($null -ne $value) 
         { 
-            if($TreatWhiteSpacesAsNull -and -not [string]::IsNullOrWhiteSpace($value)) 
+            if($TreatWhiteSpacesAsNull -and [string]::IsNullOrWhiteSpace($value)) 
             {
-                return $value
-                break
+                continue
             }
+			return $value
+			break
         }
     }
     return $null
@@ -543,13 +565,13 @@ function Get-CurrentScriptPath {
 	#>
 	[CmdletBinding()]
 	param (
-		[Parameter(Mandatory = $false)] [switch] $ParentPath
+		[Parameter(Mandatory = $false)] [Alias('Folder', 'Directory')] [switch] $ParentPath
 	)
 
 	$scriptPath = Switch ($Host.name){
-		'Visual Studio Code Host' { split-path $psEditor.GetEditorContext().CurrentFile.Path }
-		'Windows PowerShell ISE Host' {  Split-Path -Path $psISE.CurrentFile.FullPath }
-		'ConsoleHost' { $PSScriptRoot }
+		'Visual Studio Code Host' { $psEditor.GetEditorContext().CurrentFile.Path }
+		'Windows PowerShell ISE Host' {  $psISE.CurrentFile.FullPath }
+		'ConsoleHost' { $PSCommandPath }
 		default { Write-Error 'Unknown host-process or caller!' }
 	}
 

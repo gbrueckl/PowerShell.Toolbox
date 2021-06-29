@@ -1,10 +1,5 @@
-﻿$scriptPath = Switch ($Host.name) {
-	'Visual Studio Code Host' { split-path $psEditor.GetEditorContext().CurrentFile.Path }
-	'Windows PowerShell ISE Host' { Split-Path -Path $psISE.CurrentFile.FullPath }
-	'ConsoleHost' { $PSScriptRoot }
-	default { Write-Error 'Unknown Host-process or Caller!' }
-}
-$rootPath = (Get-Item $scriptPath).Parent.FullName
+﻿$scriptFolder = Get-CurrentScriptPath -ParentPath 
+$rootPath = (Get-Item $scriptFolder).Parent.FullName
 
 $moduleName = $ModuleName = (Get-ChildItem "$rootPath\Modules")[0].Name
 $psdFilePath = "$rootPath\Modules\$moduleName\$moduleName.psd1"
